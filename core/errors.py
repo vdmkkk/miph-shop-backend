@@ -6,7 +6,11 @@ from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
+from core.config import settings
 from core.schemas import ErrorDetails, ErrorResponse
+
+if not logging.getLogger().handlers:
+    logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger("app.errors")
 
@@ -27,10 +31,15 @@ def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse
 
 def db_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
     logger.exception("Database error", exc_info=exc)
+    details = None
+    if settings.enable_dev_endpoints:
+        details = {"error": f"{exc.__class__.__name__}: {exc}"}
     if isinstance(exc, IntegrityError):
-        payload = error_payload(code="CONFLICT", message="Database constraint violated")
+        payload = error_payload(
+            code="CONFLICT", message="Database constraint violated", details=details
+        )
         return JSONResponse(status_code=409, content=payload)
-    payload = error_payload(code="DB_ERROR", message="Database error")
+    payload = error_payload(code="DB_ERROR", message="Database error", details=details)
     return JSONResponse(status_code=400, content=payload)
 
 
