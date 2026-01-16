@@ -63,12 +63,18 @@ logger = logging.getLogger("app.admin")
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
+    print(f"[admin] start {request.method} {request.url.path}", flush=True)
     logger.info("Request start %s %s", request.method, request.url.path)
     try:
         response = await call_next(request)
+        print(
+            f"[admin] end {request.method} {request.url.path} -> {response.status_code}",
+            flush=True,
+        )
         logger.info("Request end %s %s -> %s", request.method, request.url.path, response.status_code)
         return response
     except Exception:
+        print(f"[admin] error {request.method} {request.url.path}", flush=True)
         logger.exception("Unhandled request error %s %s", request.method, request.url.path)
         raise
 
