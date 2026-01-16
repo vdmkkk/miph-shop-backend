@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
@@ -12,6 +14,7 @@ from core.errors import (
     unhandled_exception_handler,
     validation_exception_handler,
 )
+from core.logging_utils import setup_logging
 from core.migrations import run_migrations
 
 app = FastAPI(
@@ -54,6 +57,20 @@ app = FastAPI(
         },
     ],
 )
+
+logger = logging.getLogger("app.admin")
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logger.info("Request start %s %s", request.method, request.url.path)
+    try:
+        response = await call_next(request)
+        logger.info("Request end %s %s -> %s", request.method, request.url.path, response.status_code)
+        return response
+    except Exception:
+        logger.exception("Unhandled request error %s %s", request.method, request.url.path)
+        raise
 
 
 def _custom_openapi():
@@ -117,6 +134,7 @@ async def unhandled_error_handler(request: Request, exc: Exception) -> JSONRespo
 
 @app.on_event("startup")
 async def run_startup_migrations() -> None:
+    setup_logging()
     await run_in_threadpool(run_migrations)
 
 
