@@ -2,9 +2,14 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
 from fastapi.openapi.utils import get_openapi
+from sqlalchemy.exc import SQLAlchemyError
 
 from apps.admin_api.routers import catalog, orders, users
-from core.errors import http_exception_handler
+from core.errors import (
+    db_exception_handler,
+    http_exception_handler,
+    unhandled_exception_handler,
+)
 from core.migrations import run_migrations
 
 app = FastAPI(
@@ -82,6 +87,16 @@ async def health():
 @app.exception_handler(HTTPException)
 async def http_error_handler(request: Request, exc: HTTPException) -> JSONResponse:
     return http_exception_handler(request, exc)
+
+
+@app.exception_handler(SQLAlchemyError)
+async def db_error_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
+    return db_exception_handler(request, exc)
+
+
+@app.exception_handler(Exception)
+async def unhandled_error_handler(request: Request, exc: Exception) -> JSONResponse:
+    return unhandled_exception_handler(request, exc)
 
 
 @app.on_event("startup")
