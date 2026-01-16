@@ -4,7 +4,65 @@ from fastapi.responses import JSONResponse
 from apps.public_api.routers import auth, cart, catalog, likes, me, orders
 from core.errors import http_exception_handler
 
-app = FastAPI(title="Public API", openapi_url="/api/v1/openapi.json")
+app = FastAPI(
+    title="MIPH Shop Public API",
+    openapi_url="/api/v1/openapi.json",
+    description=(
+        "Public-facing API for the MIPH educational shop backend.\n\n"
+        "## Highlights\n"
+        "- Magic-link authentication (no passwords)\n"
+        "- Catalog browsing with filters and pagination\n"
+        "- Likes, cart sync, and checkout flows\n"
+        "- Consistent error envelope `{ error: { code, message, details } }`\n\n"
+        "## Conventions\n"
+        "- Base path: `/api/v1`\n"
+        "- JSON: camelCase\n"
+        "- Monetary fields are floats (RUB) in API responses\n"
+        "- Pagination: `page`, `perPage` with `total` and `totalPages`\n"
+    ),
+    contact={
+        "name": "MIPH Shop Backend",
+        "url": "http://localhost",
+    },
+    license_info={"name": "Educational use"},
+    openapi_tags=[
+        {
+            "name": "auth",
+            "description": (
+                "Magic-link authentication workflow: request link, consume token, "
+                "refresh access token, and logout."
+            ),
+        },
+        {
+            "name": "me",
+            "description": "User profile endpoints for the currently authenticated user.",
+        },
+        {
+            "name": "catalog",
+            "description": (
+                "Public catalog endpoints: categories, tags, items list, item details."
+            ),
+        },
+        {
+            "name": "likes",
+            "description": "Wishlist-like endpoints for adding/removing liked items.",
+        },
+        {
+            "name": "cart",
+            "description": (
+                "Server-side cart endpoints for authenticated users, including cart "
+                "merge after login."
+            ),
+        },
+        {
+            "name": "orders",
+            "description": (
+                "Checkout and order history: create order from cart, list orders, "
+                "view order details, cancel, and simulate payment (dev-only)."
+            ),
+        },
+    ],
+)
 
 
 @app.get("/api/v1/health")
