@@ -46,7 +46,12 @@ def db_exception_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse
 
 def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
     logger.exception("Unhandled error", exc_info=exc)
-    payload = error_payload(code="INTERNAL_ERROR", message="Internal server error")
+    details = None
+    if settings.enable_dev_endpoints:
+        details = {"error": f"{exc.__class__.__name__}: {exc}"}
+    payload = error_payload(
+        code="INTERNAL_ERROR", message="Internal server error", details=details
+    )
     return JSONResponse(status_code=500, content=payload)
 
 

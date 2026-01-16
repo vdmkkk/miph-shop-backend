@@ -21,13 +21,13 @@ router = APIRouter(prefix="/api/v1", tags=["catalog"])
 @router.get("/categories", response_model=CategoryListResponse)
 async def list_categories(session: AsyncSession = Depends(get_session)):
     categories = await catalog_service.list_categories(session)
-    return {"data": categories}
+    return CategoryListResponse(data=categories)
 
 
 @router.get("/tags", response_model=TagListResponse)
 async def list_tags(session: AsyncSession = Depends(get_session)):
     tags = await catalog_service.list_tags(session)
-    return {"data": tags}
+    return TagListResponse(data=tags)
 
 
 @router.get("/items", response_model=PaginatedResponse[ItemListSchema])
@@ -73,4 +73,4 @@ async def get_item_detail(
     item = await catalog_service.get_item_detail(session, slug)
     if item is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found")
-    return {"item": item}
+    return ItemDetailResponse(item=item)

@@ -1,4 +1,5 @@
 import logging
+import traceback
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
@@ -95,6 +96,7 @@ async def log_requests(request: Request, call_next):
         return response
     except Exception:
         print(f"[public] error {request.method} {request.url.path}", flush=True)
+        print(traceback.format_exc(), flush=True)
         logger.exception("Unhandled request error %s %s", request.method, request.url.path)
         raise
 
