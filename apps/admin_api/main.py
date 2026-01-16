@@ -7,6 +7,8 @@ from core.errors import http_exception_handler
 app = FastAPI(
     title="MIPH Shop Admin API",
     openapi_url="/admin/v1/openapi.json",
+    docs_url="/admin/v1/docs",
+    redoc_url="/admin/v1/redoc",
     description=(
         "Administrative API for managing the MIPH shop catalog and orders.\n\n"
         "## Authentication\n"
