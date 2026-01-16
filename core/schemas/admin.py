@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 from typing import Any
+from uuid import UUID
 
 from core.schemas.base import CamelModel
 
@@ -9,7 +10,7 @@ from core.schemas.base import CamelModel
 class CategoryCreateSchema(CamelModel):
     slug: str
     title: str
-    parent_id: str | None = None
+    parent_id: UUID | None = None
     is_active: bool = True
     sort_rank: int = 0
 
@@ -17,7 +18,7 @@ class CategoryCreateSchema(CamelModel):
 class CategoryUpdateSchema(CamelModel):
     slug: str | None = None
     title: str | None = None
-    parent_id: str | None = None
+    parent_id: UUID | None = None
     is_active: bool | None = None
     sort_rank: int | None = None
 
@@ -41,8 +42,8 @@ class ItemCreateSchema(CamelModel):
     brand: str | None = None
     is_active: bool = True
     sort_rank: int = 0
-    category_ids: list[str] = []
-    tag_ids: list[str] = []
+    category_ids: list[UUID] = []
+    tag_ids: list[UUID] = []
 
 
 class ItemUpdateSchema(CamelModel):
@@ -52,8 +53,8 @@ class ItemUpdateSchema(CamelModel):
     brand: str | None = None
     is_active: bool | None = None
     sort_rank: int | None = None
-    category_ids: list[str] | None = None
-    tag_ids: list[str] | None = None
+    category_ids: list[UUID] | None = None
+    tag_ids: list[UUID] | None = None
 
 
 class ItemImageCreateSchema(CamelModel):
