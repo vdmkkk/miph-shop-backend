@@ -3,14 +3,15 @@ from __future__ import annotations
 from datetime import datetime
 from decimal import Decimal
 from typing import Any
+from uuid import UUID
 
 from core.schemas.base import CamelModel
 
 
 class OrderItemSchema(CamelModel):
-    id: str
-    item_id: str
-    variant_id: str
+    id: UUID
+    item_id: UUID
+    variant_id: UUID
     title: str
     variant_title: str
     sku: str
@@ -20,7 +21,7 @@ class OrderItemSchema(CamelModel):
 
 
 class OrderEventSchema(CamelModel):
-    id: str
+    id: UUID
     from_status: str | None
     to_status: str
     note: str | None
@@ -40,7 +41,7 @@ class OrderContactSchema(CamelModel):
 
 
 class OrderSchema(CamelModel):
-    id: str
+    id: UUID
     status: str
     subtotal_rub: Decimal
     delivery_rub: Decimal

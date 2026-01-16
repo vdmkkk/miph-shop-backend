@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from datetime import datetime
 from decimal import Decimal
+from uuid import UUID
 
 from core.schemas.base import CamelModel
 
 
 class CartItemSchema(CamelModel):
-    variant_id: str
-    item_id: str
+    variant_id: UUID
+    item_id: UUID
     slug: str
     title: str
     variant_title: str
@@ -27,7 +28,7 @@ class CartTotalsSchema(CamelModel):
 
 
 class CartSchema(CamelModel):
-    id: str
+    id: UUID
     items: list[CartItemSchema]
     totals: CartTotalsSchema
     updated_at: datetime

@@ -2,28 +2,29 @@ from __future__ import annotations
 
 from decimal import Decimal
 from typing import Any
+from uuid import UUID
 
 from core.schemas.base import CamelModel
 
 
 class CategorySchema(CamelModel):
-    id: str
+    id: UUID
     slug: str
     title: str
-    parent_id: str | None
+    parent_id: UUID | None
     is_active: bool
     sort_rank: int
 
 
 class TagSchema(CamelModel):
-    id: str
+    id: UUID
     slug: str
     title: str
     is_active: bool
 
 
 class VariantSchema(CamelModel):
-    id: str
+    id: UUID
     sku: str
     title: str
     attributes: dict[str, Any]
@@ -34,7 +35,7 @@ class VariantSchema(CamelModel):
 
 
 class ItemImageSchema(CamelModel):
-    id: str
+    id: UUID
     url: str
     alt: str | None
     sort_order: int
@@ -42,7 +43,7 @@ class ItemImageSchema(CamelModel):
 
 
 class ItemListSchema(CamelModel):
-    id: str
+    id: UUID
     slug: str
     title: str
     short_description: str | None = None
@@ -56,7 +57,7 @@ class ItemListSchema(CamelModel):
 
 
 class ItemDetailSchema(CamelModel):
-    id: str
+    id: UUID
     slug: str
     title: str
     description: str

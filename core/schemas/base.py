@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 from typing import Any
+from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
@@ -16,7 +17,10 @@ class CamelModel(BaseModel):
         alias_generator=to_camel,
         populate_by_name=True,
         from_attributes=True,
-        json_encoders={Decimal: lambda value: float(value)},
+        json_encoders={
+            Decimal: lambda value: float(value),
+            UUID: lambda value: str(value),
+        },
     )
 
 

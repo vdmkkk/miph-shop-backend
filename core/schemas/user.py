@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from datetime import datetime
+from uuid import UUID
 
 from core.schemas.base import CamelModel
 
 
 class UserSchema(CamelModel):
-    id: str
+    id: UUID
     email: str
     name: str
     phone: str | None
