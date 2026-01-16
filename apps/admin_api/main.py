@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
+from fastapi.openapi.utils import get_openapi
 
 from apps.admin_api.routers import catalog, orders, users
 from core.errors import http_exception_handler
@@ -49,7 +50,12 @@ app = FastAPI(
 def _custom_openapi():
     if app.openapi_schema:
         return app.openapi_schema
-    schema = app.openapi()
+    schema = get_openapi(
+        title=app.title,
+        version=app.version,
+        description=app.description,
+        routes=app.routes,
+    )
     schema.setdefault("components", {}).setdefault("securitySchemes", {})[
         "AdminApiKey"
     ] = {
