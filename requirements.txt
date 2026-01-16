@@ -7,3 +7,4 @@ pydantic
 pydantic-settings
 PyJWT
 psycopg[binary]
+anyio

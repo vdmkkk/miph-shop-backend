@@ -1,9 +1,11 @@
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
 from fastapi.openapi.utils import get_openapi
 
 from apps.admin_api.routers import catalog, orders, users
 from core.errors import http_exception_handler
+from core.migrations import run_migrations
 
 app = FastAPI(
     title="MIPH Shop Admin API",
@@ -80,6 +82,11 @@ async def health():
 @app.exception_handler(HTTPException)
 async def http_error_handler(request: Request, exc: HTTPException) -> JSONResponse:
     return http_exception_handler(request, exc)
+
+
+@app.on_event("startup")
+async def run_startup_migrations() -> None:
+    await run_in_threadpool(run_migrations)
 
 
 app.include_router(catalog.router)
