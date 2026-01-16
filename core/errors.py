@@ -4,6 +4,7 @@ import logging
 
 from fastapi import HTTPException, Request
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError, ResponseValidationError
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from core.config import settings
@@ -47,3 +48,15 @@ def unhandled_exception_handler(request: Request, exc: Exception) -> JSONRespons
     logger.exception("Unhandled error", exc_info=exc)
     payload = error_payload(code="INTERNAL_ERROR", message="Internal server error")
     return JSONResponse(status_code=500, content=payload)
+
+
+def validation_exception_handler(
+    request: Request, exc: RequestValidationError | ResponseValidationError
+) -> JSONResponse:
+    logger.exception("Validation error", exc_info=exc)
+    payload = error_payload(
+        code="VALIDATION_ERROR",
+        message="Validation failed",
+        details={"errors": exc.errors()},
+    )
+    return JSONResponse(status_code=422, content=payload)

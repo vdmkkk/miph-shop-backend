@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError, ResponseValidationError
 from sqlalchemy.exc import SQLAlchemyError
 
 from apps.public_api.routers import auth, cart, catalog, likes, me, orders
@@ -8,6 +9,7 @@ from core.errors import (
     db_exception_handler,
     http_exception_handler,
     unhandled_exception_handler,
+    validation_exception_handler,
 )
 from core.migrations import run_migrations
 
@@ -87,6 +89,20 @@ async def http_error_handler(request: Request, exc: HTTPException) -> JSONRespon
 @app.exception_handler(SQLAlchemyError)
 async def db_error_handler(request: Request, exc: SQLAlchemyError) -> JSONResponse:
     return db_exception_handler(request, exc)
+
+
+@app.exception_handler(RequestValidationError)
+async def request_validation_handler(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    return validation_exception_handler(request, exc)
+
+
+@app.exception_handler(ResponseValidationError)
+async def response_validation_handler(
+    request: Request, exc: ResponseValidationError
+) -> JSONResponse:
+    return validation_exception_handler(request, exc)
 
 
 @app.exception_handler(Exception)
