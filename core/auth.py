@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 from fastapi import Depends, HTTPException, Request, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -14,6 +14,7 @@ from core.db import get_session
 from core.models.user import User
 
 _bearer = HTTPBearer(auto_error=False)
+_admin_api_key = APIKeyHeader(name="X-Admin-Api-Key", auto_error=False)
 
 
 def create_access_token(subject: str, expires_in_seconds: int) -> str:
@@ -54,8 +55,7 @@ async def get_current_user(
     return user
 
 
-def require_admin(request: Request) -> None:
-    api_key = request.headers.get("X-Admin-Api-Key")
+def require_admin(api_key: str | None = Depends(_admin_api_key)) -> None:
     if not api_key or api_key != settings.admin_api_key:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

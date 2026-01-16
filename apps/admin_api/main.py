@@ -46,6 +46,26 @@ app = FastAPI(
 )
 
 
+def _custom_openapi():
+    if app.openapi_schema:
+        return app.openapi_schema
+    schema = app.openapi()
+    schema.setdefault("components", {}).setdefault("securitySchemes", {})[
+        "AdminApiKey"
+    ] = {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Admin-Api-Key",
+        "description": "Admin API key required for all admin endpoints.",
+    }
+    schema["security"] = [{"AdminApiKey": []}]
+    app.openapi_schema = schema
+    return app.openapi_schema
+
+
+app.openapi = _custom_openapi
+
+
 @app.get("/admin/v1/health")
 async def health():
     return {"status": "ok"}
